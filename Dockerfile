@@ -10,9 +10,10 @@ RUN yum -y update && \
     yum  -y upgrade && yum clean all
 
 #install golang
+WORKDIR /tmp
 RUN curl https://storage.googleapis.com/golang/go$GOVERSION.linux-amd64.tar.gz | tar -xz
 
-COPY . ${GOROOT}
+RUN mv ./go ${GOROOT}
 
 RUN mkdir -p /go
 
