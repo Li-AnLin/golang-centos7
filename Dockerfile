@@ -1,23 +1,31 @@
 FROM centos:7
 MAINTAINER "An" <"jenny84311@gmail.com">
 
+ARG key_file="$(cat id_rsa)"
+ARG host_file="$(cat known_hosts)"
+
+ENV GOVERSION=1.12.6
+
+RUN yum -y update && \
+    yum  -y upgrade && yum -y install wget && yum clean all
+
+# add ssh
+RUN mkdir ~/.ssh/
+RUN chmod 400 ~/.ssh
+RUN echo "${key_file}" > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
+RUN echo "${host_file}" > ~/.ssh/known_hosts && chmod 600 ~/.ssh/known_hosts
+
+# install golang
+WORKDIR /tmp
+RUN wget https://dl.google.com/go/go${GOVERSION}.linux-amd64.tar.gz
+RUN tar -C /usr/local -xzf go${GOVERSION}.linux-amd64.tar.gz
+
 ENV GOROOT /usr/local/go
 ENV GOPATH /go
 ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
-ENV GOVERSION=1.7.3
+RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
 
-RUN yum -y update && \
-    yum  -y upgrade && yum clean all
-
-#install golang
-WORKDIR /tmp
-RUN curl https://storage.googleapis.com/golang/go$GOVERSION.linux-amd64.tar.gz | tar -xz
-
-RUN mv ./go ${GOROOT}
-
-RUN mkdir -p /go
-
-#install gcc g++ git
+# install gcc g++ git
 RUN yum -y install gcc automake autoconf libtool make && \
     yum -y install gcc gcc-c++ && \
     yum -y install git && \
@@ -26,6 +34,6 @@ RUN yum -y install gcc automake autoconf libtool make && \
 RUN go version && \
     git version
 
-WORKDIR /go
+WORKDIR $GOPATH
 
-CMD ["/bin/bash","-c", "tail -f /dev/null"]
+# CMD ["/bin/bash","-c", "tail -f /dev/null"]
