@@ -1,10 +1,10 @@
 FROM centos:7
-MAINTAINER "An" <"jenny84311@gmail.com">
+MAINTAINER "lin" <"powersafe.lin@gmail.com">
 
-ARG key_file="$(cat id_rsa)"
-ARG host_file="$(cat known_hosts)"
+ARG key_file
+ARG host_file
 
-ENV GOVERSION=1.12.6
+ENV GOVERSION=1.13.8
 
 RUN yum -y update && \
     yum  -y upgrade && yum -y install wget && yum clean all
@@ -12,8 +12,8 @@ RUN yum -y update && \
 # add ssh
 RUN mkdir ~/.ssh/
 RUN chmod 400 ~/.ssh
-RUN echo "${key_file}" > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
-RUN echo "${host_file}" > ~/.ssh/known_hosts && chmod 600 ~/.ssh/known_hosts
+RUN echo "$key_file" > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
+RUN echo "$host_file" > ~/.ssh/known_hosts && chmod 600 ~/.ssh/known_hosts
 
 # install golang
 WORKDIR /tmp
