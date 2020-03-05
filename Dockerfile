@@ -28,14 +28,15 @@ ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
 RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
 
 # install gcc g++ git
-RUN yum -y install gcc automake autoconf libtool make && \
-    yum -y install gcc gcc-c++ && \
-    yum -y install git && \
+RUN yum -y install git make libtool autoconf bzip2 && \
+    yum -y install centos-release-scl scl-utils libstdc++-static && \
     yum clean all
 
+RUN yum -y install devtoolset-7-gcc-*
+RUN echo "source scl_source enable devtoolset-7" >> /etc/bashrc
+RUN source /etc/bashrc
 RUN go version && \
+    gcc --version && \
     git version
 
 WORKDIR $GOPATH
-
-# CMD ["/bin/bash","-c", "tail -f /dev/null"]
