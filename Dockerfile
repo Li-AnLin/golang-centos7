@@ -1,11 +1,12 @@
 FROM centos:7
-MAINTAINER "lin" <"powersafe.lin@gmail.com">
+
+LABEL version="golang-1.15 centos-7" maintainer="lin"
 
 ARG key_file
 ARG host_file
 ARG pubkey_file
 
-ENV GOVERSION=1.13.8
+ENV GOVERSION=1.15.2
 
 RUN yum -y update && \
     yum  -y upgrade && yum -y install wget && yum clean all
